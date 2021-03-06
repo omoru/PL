@@ -1,0 +1,5 @@
+real peso;
+ bool pesado
+&&
+ peso = (45 * 12) / -2.05;
+ pesado = (peso > 10.01) or (peso / 2 <= +0.1)
