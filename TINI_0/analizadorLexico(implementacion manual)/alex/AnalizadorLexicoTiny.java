@@ -41,15 +41,12 @@ public class AnalizadorLexicoTiny {
     REC_BNE,
     REC_BEQ,
     REC_ISEP_DI,
-    REC_SEP_DI
-    
-   
-    /*REC_IEXP
-     * REC_IEXP2
-     * REC_EXP
-     * REC_EXP0
-     * 
-     * */
+    REC_SEP_DI,
+    REC_IEXP,
+    REC_IEXP2,
+    REC_EXP,
+    REC_EXP0
+     
     
    }
 
@@ -97,6 +94,7 @@ public class AnalizadorLexicoTiny {
            case REC_ENT:
                if (hayDigito()) transita(Estado.REC_ENT);
                else if (hayPunto()) transita(Estado.REC_IDEC);
+               else if (hayExp()) transita(Estado.REC_IEXP);
                else return unidadEnt();
                break;
            case REC_0:
@@ -153,8 +151,24 @@ public class AnalizadorLexicoTiny {
            case REC_DEC: 
                if (hayDigitoPos()) transita(Estado.REC_DEC);
                else if (hayCero()) transita(Estado.REC_IDEC);
+               else if(hayExp()) transita(Estado.REC_IEXP);
                else return unidadReal();
                break;
+           case REC_IEXP:
+        	   if(hayCero()) transita(Estado.REC_EXP0);
+        	   else if(haySuma() || hayResta()) transita(Estado.REC_IEXP2);
+        	   else error();
+        	   break;
+           case REC_IEXP2:
+        	   if(hayDigitoPos()) transita(Estado.REC_EXP);
+        	   else if(hayCero()) transita(Estado.REC_EXP0);
+        	   else error();
+        	   break;
+           case REC_EXP0: return unidadReal();
+           case REC_EXP:
+        	   if(hayDigito()) transita(Estado.REC_EXP);
+        	   else return  unidadReal();
+        	   break;
 		default:
 			error();
 			break;
@@ -219,7 +233,7 @@ private void transita(Estado sig) throws IOException {
    private boolean hayPunto() {return sigCar == '.';}
    //Cadenas ignorables
    private boolean haySep() {return sigCar == ' ' || sigCar == '\t' || sigCar=='\n';}
-   
+   private boolean hayExp() {return sigCar == 'E' || sigCar == 'e';}
    private boolean hayMenor() {return sigCar == '<';}
    private boolean hayMayor() {return sigCar == '>';}
    private boolean hayEOF() {return sigCar == -1;}
