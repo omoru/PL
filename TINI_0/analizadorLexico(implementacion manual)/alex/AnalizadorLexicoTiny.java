@@ -31,6 +31,7 @@ public class AnalizadorLexicoTiny {
     REC_0,
     REC_IDEC,
     REC_DEC,
+    REC_DEC0,
     REC_EOF,
     REC_SCOLON,
     REC_BLT,
@@ -45,7 +46,8 @@ public class AnalizadorLexicoTiny {
     REC_IEXP,
     REC_IEXP2,
     REC_EXP,
-    REC_EXP0
+    REC_EXP0,
+    REC_IDEC0
      
     
    }
@@ -141,16 +143,27 @@ public class AnalizadorLexicoTiny {
            case REC_EOF: return unidadEof();
            case REC_IDEC:
                if (hayDigitoPos()) transita(Estado.REC_DEC);
-               else if (hayCero()) transita(Estado.REC_IDEC);
+               else if (hayCero()) transita(Estado.REC_DEC0);
                else error();
                break;
+           case REC_DEC0:
+        	   	if(hayDigitoPos()) transita(Estado.REC_DEC);
+        	   	else if(hayCero()) transita(Estado.REC_IDEC0);
+        	   	else if(hayExp()) transita(Estado.REC_IEXP);
+        	   	else return unidadReal();
+        	   	break;
+           case REC_IDEC0:
+        	   if(hayCero()) transita(Estado.REC_IDEC0);
+        	   else if(hayDigitoPos())transita(Estado.REC_DEC);
+        	   else error();
+        	   break;
            case REC_IBNE:
         	   if(hayIgual()) transita(Estado.REC_BNE);
         	   else error();
         	   break;
            case REC_DEC: 
                if (hayDigitoPos()) transita(Estado.REC_DEC);
-               else if (hayCero()) transita(Estado.REC_IDEC);
+               else if (hayCero()) transita(Estado.REC_IDEC0);
                else if(hayExp()) transita(Estado.REC_IEXP);
                else return unidadReal();
                break;
