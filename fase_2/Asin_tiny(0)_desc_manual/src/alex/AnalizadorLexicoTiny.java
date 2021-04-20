@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.Reader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import errors.GestionErroresTiny;
 
 public class AnalizadorLexicoTiny {
 
@@ -14,6 +15,7 @@ public class AnalizadorLexicoTiny {
    private int columnaInicio;
    private int filaActual;
    private int columnaActual;
+   private GestionErroresTiny errores;
    private static String NL = System.getProperty("line.separator");
    
    private static enum Estado {
@@ -60,6 +62,9 @@ public class AnalizadorLexicoTiny {
     sigCar = input.read();
     filaActual=1;
     columnaActual=1;
+   }
+   public void fijaGestionErrores(GestionErroresTiny errores) {
+	   this.errores = errores;
    }
    
    public UnidadLexica sigToken() throws IOException {
@@ -245,7 +250,7 @@ private void transita(Estado sig) throws IOException {
    private boolean haySemicolon() {return sigCar == ';';}
    private boolean hayPunto() {return sigCar == '.';}
    //Cadenas ignorables
-   private boolean haySep() {return sigCar == ' ' || sigCar == '\t' || sigCar=='\n';}
+   private boolean haySep() {return sigCar == ' ' || sigCar == '\t' || sigCar=='\n' || sigCar == '\r' || sigCar == '\b';}
    private boolean hayExp() {return sigCar == 'E' || sigCar == 'e';}
    private boolean hayMenor() {return sigCar == '<';}
    private boolean hayMayor() {return sigCar == '>';}
@@ -335,12 +340,15 @@ private void transita(Estado sig) throws IOException {
    }
    
    private void error() {
-     System.err.println("("+filaActual+','+columnaActual+"):Caracter inexperado :"+ this.lex);  
-     System.exit(1);
+     this.errores.errorLexico(filaActual, columnaActual, this.lex.toString());
    }
 
    public static void main(String arg[]) throws IOException {
-     Reader input = new InputStreamReader(new FileInputStream("input.txt"));
+	   if(arg.length == 0) {
+			 System.out.println("Introduzca el fichero argumento (ejemplo: input.txt)");
+			 return;
+		 }
+	 Reader input = new InputStreamReader(new FileInputStream(arg[0]));
      AnalizadorLexicoTiny al = new AnalizadorLexicoTiny(input);
      UnidadLexica unidad;
      do {

@@ -1,4 +1,4 @@
-package alex;
+
 
 public enum ClaseLexica {
 	

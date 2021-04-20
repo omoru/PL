@@ -1,0 +1,101 @@
+package asintAsc;
+
+import java_cup.runtime.*;
+import alex.AnalizadorLexicoTiny;
+import alex.UnidadLexica;
+import errors.GestionErroresTiny;
+
+scan with {: return getScanner().next_token(); :};
+parser code {: 
+   private GestionErroresTiny errores;
+   public void syntax_error(Symbol unidadLexica) {
+     errores.errorSintactico((UnidadLexica)unidadLexica);
+   }
+:};
+init with {: 
+   errores = new GestionErroresTiny();
+   AnalizadorLexicoTiny alex = (AnalizadorLexicoTiny)getScanner();
+   alex.fijaGestionErrores(errores);
+:};
+
+
+terminal    sep_di,scol,var,id,type,proc,pap,pcierre,coma,amp,r_real,r_int,r_bool,r_string,
+            array,cap,ccierre,ent,of,record,llap,llcierre,pointer,igual,r_if,then,r_else,endif,
+            r_while,r_do,endwhile,read,write,nl,r_new,delete,call,mas,menos,not,real,cadena,r_true,
+            r_false,r_null,por,div,mod,bne,beq,ble,bge,bgt,blt,and,or,punto,flecha;
+
+non terminal PROGRAMA,LDECS,DECS,DEC,DEC_VAR,DEC_TIPO,DEC_PROC,PARAMS,LPARAMS,PARAM,TIPO,
+             TIPO_BASICO,TIPO_ARRAY,TIPO_REG,TIPO_PUNT,CAMPOS,CAMPO,LINST,INST,INST_ASIG,
+             INST_IF_THEN,INST_IF_THEN_ELSE,INST_WHILE,AUX_LINST,INST_READ,INST_WRITE,
+             INST_NL,INST_NEW,INST_DELETE,INST_CALL,REAL_PARAMS,INST_COMPUESTA,BLOQUE,
+             E0,E1,E2,E3,E4,E5,E6,E7,OP5A,OP3NA,OP2AI,OP1AI;
+
+PROGRAMA ::= LDECS LINST;
+LDECS ::= DECS sep_di;
+LDECS ::= ;
+DECS ::= DECS scol DEC;
+DECS ::= DEC;
+DEC ::= DEC_VAR | DEC_TIPO | DEC_PROC;
+DEC_VAR ::= var TIPO id;
+DEC_TIPO ::= type TIPO id;
+DEC_PROC ::= proc id PARAMS BLOQUE;
+PARAMS ::= pap LPARAMS pcierre;
+LPARAMS ::= LPARAMS coma PARAM;
+LPARAMS ::= PARAM;
+LPARAMS ::= ;
+PARAM ::= TIPO amp id;
+PARAM ::= TIPO id;
+TIPO ::= TIPO_BASICO |  TIPO_ARRAY | TIPO_REG | TIPO_PUNT | id;
+TIPO_BASICO ::=  r_real | r_int | r_bool | r_string ;
+TIPO_ARRAY ::= array cap ent ccierre of TIPO;
+TIPO_REG ::= record llap CAMPOS llcierre; 
+TIPO_PUNT ::= pointer TIPO;
+CAMPOS ::= CAMPOS scol CAMPO;
+CAMPOS ::= CAMPO;
+CAMPO ::= TIPO id;
+LINST ::= LINST scol INST;
+LINST ::= INST;
+INST ::= INST_ASIG | INST_IF_THEN | INST_IF_THEN_ELSE | INST_WHILE | INST_READ |      INST_WRITE | INST_NL | INST_NEW | INST_DELETE | INST_CALL | INST_COMPUESTA;
+INST_ASIG ::= E0 igual E0;
+INST_IF_THEN ::= r_if E0 then AUX_LINST endif;
+INST_IF_THEN_ELSE ::= r_if E0 then AUX_LINST r_else AUX_LINST endif;
+INST_WHILE ::= r_while E0 r_do AUX_LINST endwhile;
+AUX_LINST ::= LINST;
+AUX_LINST ::=;
+
+INST_READ ::= read E0;
+INST_WRITE ::= write E0;
+INST_NL ::= nl;
+INST_NEW  ::= r_new E0;
+INST_DELETE  ::= delete E0;
+INST_CALL ::= call id pap REAL_PARAMS pcierre;
+REAL_PARAMS ::= REAL_PARAMS coma E0;
+REAL_PARAMS ::= E0;
+REAL_PARAMS ::= ;
+INST_COMPUESTA ::= BLOQUE;
+BLOQUE ::= llap PROGRAMA llcierre;
+E0 ::= E1 mas E0;
+E0 ::= E1 menos E1;
+E0 ::= E1;
+E1 ::= E1 OP1AI E2;
+E1 ::= E2;
+E2 ::= E2 OP2AI E3;
+E2 ::= E3;
+E3 ::= E4 OP3NA E4;
+E3 ::= E4;
+E4 ::= menos E5;
+E4 ::= not E4;
+E4 ::= E5;
+E5 ::= E5 OP5A;
+E5 ::= E6;
+E6 ::= por E6;
+E6 ::= E7;
+E7 ::= ent | real | cadena | r_true | r_false | id | r_null |  pap E0 pcierre;    
+
+OP5A ::= cap E0 ccierre | punto id | flecha id;
+OP3NA ::= por | div | mod;
+OP2AI ::= bne | beq | ble | bge | blt | bgt;
+OP1AI ::= and | or;
+
+
+

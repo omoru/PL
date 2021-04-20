@@ -1,4 +1,3 @@
-package alex;
 
 public class ALexOperations {
   private AnalizadorLexicoTiny alex;
@@ -109,7 +108,7 @@ public class ALexOperations {
    public UnidadLexica unidadCorchete_ap() {
 	     return new UnidadLexicaUnivaluada(alex.fila(),alex.columna(),ClaseLexica.CAP);     
    }
-   public UnidadLexica unidadCorcheteCierre() {
+   public UnidadLexica unidadCorchete_ci() {
 	     return new UnidadLexicaUnivaluada(alex.fila(),alex.columna(),ClaseLexica.CCIERRE);     
    }
    public UnidadLexica unidadLlave_ap() {
@@ -135,7 +134,7 @@ public class ALexOperations {
    }
       
    public void error() {
-     System.err.println("("+filaActual+','+columnaActual+"):Caracter inexperado :"+ this.lex);  
+     System.err.println("("+alex.fila()+','+alex.columna()+"):Caracter inexperado :"+ alex.lexema());  
      System.exit(1);
    }
 }
