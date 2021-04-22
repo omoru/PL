@@ -1,15 +1,23 @@
+package alex;
+import errors.GestionErroresTiny;
 %%
+%cup
 %line
 %column
 %class AnalizadorLexicoTiny
 %type  UnidadLexica
 %unicode
+%public
 
 %{
   private ALexOperations ops;
+  private GestionErroresTiny errores;
   public String lexema() {return yytext();}
   public int fila() {return yyline+1;}
   public int columna() {return yycolumn+1;}
+  public void fijaGestionErrores(GestionErroresTiny errores){
+    this.errores=errores;
+  }
 %}
 
 %eofval{
@@ -25,14 +33,10 @@ digitoPositivo = [1-9]
 digito = ({digitoPositivo}|0)
 parteEntera = 0 | ({digitoPositivo}{digito}*)
 parteDecimal = \.(0 | ({digito}* {digitoPositivo}))
-parteExponencial = ("E"|"e")[\+,\-]?{parteEntera}
+parteExponencial = (E|e)[\+,\-]?{parteEntera}
 comentario = #[^\n]*
 allowedCharacters = [^\"\r\b\n]
 ignoredStrings = [ \t\r\b\n]
-cadena = \"{allowedCharacters}*\"
-identificador = {letra}({letra}|{digito}|_)*
-numeroEntero = [\+,\-]?{parteEntera}
-numeroReal = {numeroEntero} ({parteDecimal}{parteExponencial} | {parteDecimal}|{parteExponencial})
 SEP_DI= &&           
 MAS= \+         
 MENOS= \-           
@@ -87,6 +91,10 @@ R_WRITE= write
 R_NL= nl
 R_VAR= var
 R_TYPE= type
+cadena = \"{allowedCharacters}*\"
+identificador = {letra}({letra}|{digito}|_)*
+numeroEntero = [\+,\-]?{parteEntera}
+numeroReal = {numeroEntero}({parteDecimal}{parteExponencial} | {parteDecimal} |{parteExponencial})
 %%
 
 {ignoredStrings}        {}
@@ -147,10 +155,10 @@ R_TYPE= type
 {FLECHA}                {return ops.unidadFlecha();}
 {COMA}                  {return ops.unidadComa();}
 
-{numeroEntero}          {return ops.unidadEnt();}
 {numeroReal}            {return ops.unidadReal();}
+{numeroEntero}          {return ops.unidadEnt();}
 {cadena}                {return ops.unidadCadena();}
 {identificador}         {return ops.unidadId();}
 
 
-[^]                     {ops.error();}  
+[^]                     {errores.errorLexico(fila(),lexema());}   

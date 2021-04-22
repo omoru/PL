@@ -1,0 +1,129 @@
+options  {
+  STATIC=false;
+}  
+PARSER_BEGIN(AnalizadorSintacticoDescTiny)
+package asintDesc;
+
+public class AnalizadorSintacticoDescTiny {}
+PARSER_END(AnalizadorSintacticoDescTiny)
+  TOKEN:{<#letra:["a"-"z","A"-"Z"]>}
+  TOKEN:{<#digitoPositivo:["1"-"9"]>}
+  TOKEN:{<#digito:<digitoPositivo>|"0">} 
+  TOKEN:{<#parteEntera:(<digitoPositivo> (<digito>)*) |"0">}
+  TOKEN:{<#parteDecimal: "." ("0" | ((<digito>)* <digitoPositivo>))>}
+  TOKEN:{<#parteExp: ["E","e"] (["+","-"])? <parteEntera>>}
+  TOKEN:{<#AllowedCharacters: ~["\"","\r","\b","\n"]>}
+  
+  SKIP:{<["\t"," ","\r","\b","\n"]>}  
+  SKIP:{<"#"(~["\n"])*>}  
+
+  TOKEN: {<var:"var">}
+  TOKEN: {<type:"type">}
+  TOKEN: {<proc:"proc">}
+  TOKEN: {<r_int:"int">}
+  TOKEN: {<r_real:"real">}
+  TOKEN: {<r_bool:"bool">}
+  TOKEN: {<r_string:"string">}
+  TOKEN: {<array:"array">}
+  TOKEN: {<of:"of">}
+  TOKEN: {<record:"record">}
+  TOKEN: {<pointer:"pointer">}
+  TOKEN: {<r_if: "if">}
+  TOKEN: {<then:"then">}
+  TOKEN: {<endif:"endif">}
+  TOKEN: {<r_else:"else">}
+  TOKEN: {<r_while:"while">}
+  TOKEN: {<r_do:"do">}
+  TOKEN: {<endwhile:"endwhile">}
+  TOKEN: {<read:"read">}
+  TOKEN: {<write:"write">}
+  TOKEN: {<nl:"nl">}
+  TOKEN: {<r_new:"new">}
+  TOKEN: {<delete:"delete">}
+  TOKEN: {<call:"call">}
+  TOKEN: {<not:"not">}
+  TOKEN: {<r_true:"true">}
+  TOKEN: {<r_false:"false">}
+  TOKEN: {<r_null:"null">}
+  TOKEN: {<and:"and">}
+  TOKEN: {<or:"or">}
+  TOKEN: {<punto:".">}
+  TOKEN: {<flecha:"->">}
+
+  TOKEN:{<identificador: <letra>(<letra>|<digito> |"_")*>}
+  TOKEN:{<numeroEntero: (["+","-"])? <parteEntera> >}
+  TOKEN:{<numeroReal: <numeroEntero> (<parteDecimal><parteExp> | <parteDecimal> | <parteExp>)>}
+  TOKEN:{<str: "\""(<AllowedCharacters>)* "\"">}
+
+  
+
+  void SP()       : {} {PROGRAMA() <EOF>}
+  void PROGRAMA() : {} {LDECS() LINST()}
+  void LDECS()    : {} {DECS() "&&" | {} }  
+  void DECS()     : {} {DEC() RDECS()}
+  void RDECS()    : {} {";" DEC() RDECS() | {} }
+  void DEC()      : {} {DEC_VAR() | DEC_TIPO() | DEC_PROC()}
+  void DEC_VAR()  : {} {<var> TIPO() <identificador>}
+  void DEC_TIPO() : {} {<type> TIPO() <identificador>}
+  void DEC_PROC() : {} {<proc> <identificador> PARAMS() BLOQUE()}
+  void PARAMS()   : {} {"(" LPARAMS() ")"}
+  void LPARAMS()  : {} {PARAM() RLPARAMS() | {} }
+  void RLPARAMS() : {} {"," PARAM() RLPARAMS() | {} }
+  void PARAM()    : {} {TIPO() RPARAM()}
+  void RPARAM()   : {} {<identificador> | "&" <identificador>}
+  void TIPO()     : {} {TIPO_BASICO() | TIPO_ARRAY() | TIPO_REG() | TIPO_PUNT() | <identificador>}
+  void TIPO_BASICO(): {} {(<r_int> | <r_real> | <r_bool> | <r_string>) }
+  void TIPO_ARRAY()  : {} {<array> "[" <numeroEntero> "]" <of> TIPO() }
+  void TIPO_REG()  : {} {<record> "{" CAMPOS() "}" }
+  void TIPO_PUNT()  : {} {<pointer> TIPO() }
+  void CAMPOS()  : {} { CAMPO() RCAMPOS() }
+  void RCAMPOS()  : {} {";" CAMPO() RCAMPOS() | {} }
+  void CAMPO()  : {} { TIPO() <identificador> }
+  void LINST()  : {} {INST() RLINST() }
+  void RLINST()  : {} {";" INST() RLINST() | {} }
+  void INST()  : {} {INST_ASIG() | INST_IF() | INST_WHILE() | INST_READ() | INST_WRITE() |INST_NL() | INST_NEW() | INST_DELETE() | INST_CALL() | INST_COMPUESTA()}
+  void INST_ASIG()  : {} { E0() "=" E0()}
+  void INST_IF()  : {} {<r_if> E0() <then> AUX_LINST() RES_IF() <endif> }
+  void RES_IF()  : {} { <r_else> AUX_LINST() | {} }
+  void INST_WHILE()  : {} {<r_while>  E0() <r_do> AUX_LINST() <endwhile> }
+  void AUX_LINST()  : {} {LINST() | {} }
+  void INST_READ()  : {} {<read> E0()} 
+  void INST_WRITE()  : {} {<write> E0()}
+  void INST_NL()  : {} {<nl>}
+  void INST_NEW()  : {} {<r_new> E0()}
+  void INST_DELETE()  : {} {<delete> E0()}
+  void INST_CALL()  : {} {<call> <identificador> "(" REAL_PARAMS() ")"}
+  void REAL_PARAMS()  : {} {E0() RES_PARAMS() | {} }
+  void RES_PARAMS()  : {} {"," E0() RES_PARAMS() | {} }
+  void INST_COMPUESTA()  : {} {BLOQUE()}
+  void BLOQUE()  : {} { "{" RBLOQUE()}
+  void RBLOQUE()  : {}  { "}" | PROGRAMA() "}"}
+
+  void E0()  : {} {E1() RES0()}
+  void RES0()  : {} {"+" E0() | "-" E1() | {} }
+  void E1()  : {} { E2() RES1()}
+  void RES1()  : {} {OP1AI() E2() RES1() | {}}
+  void E2()  : {} {E3() RES2()}
+  void RES2()  : {} {OP2AI() E3() RES2() | {} }
+  void E3()  : {} {E4() RES3()}
+  void RES3()  : {} {OP3NA() E4() |{} }
+  void E4()  : {} {"-" E5() | <not> E4() | E5()}
+  void E5()  : {} {E6() RES5()}
+  void RES5()  : {} {OP5A() RES5()  | {}}
+  void E6()  : {} {"*" E6() | E7() }
+  void E7()  : {} {<numeroEntero> | <numeroReal> | <str> | <r_true> | <r_false> | <identificador> | <r_null> | "(" E0() ")"}
+
+  void OP5A():{} {<punto><identificador> | <flecha> <identificador> | "[" E0() "]"}
+  void OP1AI()  : {} {<and> | <or>}
+  void OP2AI()  : {} {"!=" | "==" | "<" | ">" | "<=" | ">="}
+  void OP3NA()  : {} {"*" | "/" | "%"}
+  
+
+
+
+
+
+
+  
+   
+

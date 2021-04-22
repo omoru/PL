@@ -1,6 +1,0 @@
-write "a6%$$33.."; nl;
-write ""; nl;
-write "\b\r\n"; nl;
-write "frase 1 
-	frase 2"; nl;
-#write """; nl;
