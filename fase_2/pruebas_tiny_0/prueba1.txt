@@ -1,4 +1,3 @@
-int   peso;
  bool pesado
  		&&
     peso = (-45.001 * (12e-56 * +0.0)) / -2.05;
