@@ -33,7 +33,7 @@ digitoPositivo = [1-9]
 digito = ({digitoPositivo}|0)
 parteEntera = 0 | ({digitoPositivo}{digito}*)
 parteDecimal = \.(0 | ({digito}* {digitoPositivo}))
-parteExponencial = (E|e)[\+,\-]?{parteEntera}
+parteExponencial = (E|e)[\+\-]?{parteEntera}
 comentario = #[^\n]*
 allowedCharacters = [^\"\r\b\n]
 ignoredStrings = [ \t\r\b\n]
@@ -93,7 +93,7 @@ R_VAR= var
 R_TYPE= type
 cadena = \"{allowedCharacters}*\"
 identificador = {letra}({letra}|{digito}|_)*
-numeroEntero = [\+,\-]?{parteEntera}
+numeroEntero = [\+\-]?{parteEntera}
 numeroReal = {numeroEntero}({parteDecimal}{parteExponencial} | {parteDecimal} |{parteExponencial})
 %%
 
