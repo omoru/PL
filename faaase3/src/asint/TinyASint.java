@@ -20,8 +20,7 @@ public class TinyASint {
      }
      
      public int fila() {return fila;}
-     public int col() {return col;}
-     
+     public int col() {return col;}     
      public String toString() {
        return s;
      }

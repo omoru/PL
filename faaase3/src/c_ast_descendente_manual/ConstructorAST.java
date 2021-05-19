@@ -63,7 +63,7 @@ public class ConstructorAST {
 			empareja(ClaseLexica.SEMICOLON);
 			Dec dec = DEC();
 			return RLDECs(sem.lista_dec_muchas(lDecs_h, dec));
-		case SEP_DI:return lDecs_h;/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		case SEP_DI:return lDecs_h;
 		default:  errores.errorSintactico(anticipo.fila(),anticipo.columna(),anticipo.clase(),
 				ClaseLexica.SEMICOLON,ClaseLexica.SEP_DI);                                       
 		}
@@ -74,9 +74,10 @@ public class ConstructorAST {
 		switch(anticipo.clase()) {
 		case R_BOOL: case R_INT: case R_REAL:  
 			Tipo tipo = NOMBRE_TIPO();
+			StringLocalizado aux = str(this.anticipo.toString(),this.anticipo.fila(),
+					this.anticipo.columna()); 
 			empareja(ClaseLexica.IDEN);
-			return sem.dec(tipo,new StringLocalizado(this.anticipo.toString(),this.anticipo.fila(),
-					this.anticipo.columna()));
+			return sem.dec(tipo,aux);
 		default: errores.errorSintactico(anticipo.fila(),anticipo.columna(),anticipo.clase(),ClaseLexica.R_INT,
 				ClaseLexica.R_REAL,ClaseLexica.R_BOOL);                           
 		}
@@ -126,12 +127,12 @@ public class ConstructorAST {
 	private Inst INST() {
 		switch(anticipo.clase()) {       
 		case IDEN:   
-			StringLocalizado id = new StringLocalizado(this.anticipo.toString(),
+			StringLocalizado aux = str(this.anticipo.toString(),
 					this.anticipo.fila(),this.anticipo.columna());
 			empareja(ClaseLexica.IDEN);
 			empareja(ClaseLexica.IGUAL);
 			Exp exp = E0();
-			return sem.inst(id,exp);
+			return sem.inst(aux,exp);
 		default: errores.errorSintactico(anticipo.fila(),anticipo.columna(),anticipo.clase(),
 				ClaseLexica.IDEN);                                       
 		}
@@ -203,14 +204,14 @@ public class ConstructorAST {
 		return null;   
 	}
 
-	private Exp RES2(Exp exp__h) {
+	private Exp RES2(Exp exp_h) {
 		switch(anticipo.clase()) {
 		case BEQ:  case BNE:    case BLT:    case BLE: case BGE:    case BGT:
 			String op = Op2AI();
 			Exp exp_3= E3();
-			return RES2(sem.exp(op, exp__h, exp_3));
+			return RES2(sem.exp(op, exp_h, exp_3));
 		case R_AND: case R_OR:    case MAS:    case MENOS:    case PCIERRE:    case SEMICOLON:    case EOF:
-			break;
+			return exp_h;
 		default:    
 			errores.errorSintactico(anticipo.fila(),anticipo.columna(),anticipo.clase(),
 					ClaseLexica.BEQ,ClaseLexica.BNE,ClaseLexica.BLT,ClaseLexica.BLE,ClaseLexica.BGE,ClaseLexica.BGT,ClaseLexica.R_AND,
@@ -264,7 +265,7 @@ public class ConstructorAST {
 		return null;  
 	}
 	private Exp E5() {
-		StringLocalizado str = new StringLocalizado(this.anticipo.toString(), this.anticipo.fila(),
+		StringLocalizado str = str(this.anticipo.toString(), this.anticipo.fila(),
 				this.anticipo.columna());
 		switch(anticipo.clase()) {
 		case ENT:  empareja(ClaseLexica.ENT);
@@ -345,5 +346,7 @@ public class ConstructorAST {
 	        errores.errorFatal(e);
 	      }
 	   }
-
+	  public StringLocalizado str(String s, int fila, int col) {
+	        return new StringLocalizado(s,fila,col);
+	    }
 }

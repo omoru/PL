@@ -2,6 +2,8 @@ package tiny;
 
 
 import asint.TinyASint.Prog;
+import procesamientos.Impresion;
+
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -11,7 +13,7 @@ public class Main {
    public static void main(String[] args) throws Exception {
          Prog prog = null;
          prog = ejecuta_descendente_manual(args[0]);
-         //prog.procesa(new Impresion());
+         prog.procesa(new Impresion());
          System.out.println("ok");
            
    }

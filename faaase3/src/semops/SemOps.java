@@ -21,10 +21,7 @@ public class SemOps extends TinyASint {
        throw new UnsupportedOperationException("exp "+op);
    }
 
-public Dec switch_tipo(Tipo tipo) {
-	// TODO Auto-generated method stub
-	return null;
-}  
+
 
    
 }
