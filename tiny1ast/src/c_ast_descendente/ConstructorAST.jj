@@ -12,6 +12,13 @@ import asint.TinyASint.LInst;
 import asint.TinyASint.Prog;
 import asint.TinyASint.StringLocalizado;
 import asint.TinyASint.Tipo;
+import asint.TinyASint.LParams;
+import asint.TinyASint.Bloque;
+import asint.TinyASint.Param;
+import asint.TinyASint.LCampos;
+import asint.TinyASint.Campo;
+import asint.TinyASint.LInst_aux;
+import asint.TinyASint.LReal_params;
 import semops.SemOps;
 
 
@@ -75,8 +82,8 @@ PARSER_END(ConstructorAST)
                       {prog = PROGRAMA() <EOF> 
                       {return prog;}}
   Prog PROGRAMA()   : {LDecs ldecs; LInst linst;}
-                      {ldecs = LDECS() linst = LINST()
-                      {return sem.programa(ldecs,linst);}} 
+                      {ldecs = LDECS() "&&" linst = LINST() {return sem.programa(ldecs,linst);}
+                      | linst = LINST() {return sem.programa(null,linst);}} 
   LDecs LDECS()     : {Dec dec; LDecs decs,result; }
                       {dec = DEC() result = RDECS(sem.decs_una(dec))
                       {return result;}}
@@ -89,15 +96,15 @@ PARSER_END(ConstructorAST)
                     <type> tipo = TIPO() id = <identificador> {return sem.dec_type(tipo,sem.str(id.image,id.beginLine,id.beginColumn));} |
                     <proc> id = <identificador> "(" res = RES_DEC(sem.str(id.image,id.beginLine,id.beginColumn)) {return res;}}
 
-  Dec RES_DEC(Token id_h) : {LParams lparams; Bloque bloque;}
-                         {lparams = LPARAMS() ")" bloque = BLOQUE() {return sem.dec_proc_con_params(sem.str(id_h.image,id_h.beginLine,id_h.beginColumn),lparams,bloque);} 
-                         |  ")" bloque = BLOQUE() {return sem.dec_proc_sin_params(sem.str(id_h.image,id_h.beginLine,id_h.beginColumn),bloque);}}
+  Dec RES_DEC(StringLocalizado id_h) : {LParams lparams; Bloque bloque;}
+                         {lparams = LPARAMS() ")" bloque = BLOQUE() {return sem.dec_proc_con_params(id_h,lparams,bloque);} 
+                         |  ")" bloque = BLOQUE() {return sem.dec_proc_sin_params(id_h,bloque);}}
 
   LParams LPARAMS()  : {Param param; LParams rlparams;}
                      {param = PARAM() rlparams = RLPARAMS(sem.l_params_uno(param))
                      {return rlparams;}}
 
-  LParams RLPARAMS(LParam param_h) : {Param param; LParams rlparams;}
+  LParams RLPARAMS(LParams param_h) : {Param param; LParams rlparams;}
                                  {"," param = PARAM() {return RLPARAMS(sem.l_params_muchos(param_h,param));}
                                   | {return param_h;}}
   Param PARAM()    : {Tipo tipo;}
@@ -118,7 +125,7 @@ PARSER_END(ConstructorAST)
                     | id = <identificador> {return sem.tipo_Id(sem.str(id.image,id.beginLine,id.beginColumn));}
                     | <array> "[" num = <numeroEntero> "]" <of> tipo = TIPO() {return sem.tipo_Array(sem.str(num.image,num.beginLine,num.beginColumn),tipo);}
                     | <record> "{" lcampos = CAMPOS() "}" {return sem.tipo_Reg(lcampos);}
-                    | <pointer> tipo = TIPO() {return sem.tipo_Pointer(tipo);} 
+                    | <pointer> tipo = TIPO() {return sem.tipo_Puntero(tipo);} 
                   }
 
   
@@ -146,16 +153,16 @@ PARSER_END(ConstructorAST)
                 |<r_while>  exp1 = E0() <r_do> linst_aux = AUX_LINST() <endwhile> {return sem.inst_while(exp1,linst_aux);}
                 |<read> exp1 = E0() {return sem.inst_read(exp1);}
                 |<write> exp1 = E0() {return sem.inst_write(exp1);}
-                |<nl> {return sem.inst_nl;}
+                |<nl> {return sem.inst_nl();}
                 |<r_new> exp1 = E0() {return sem.inst_new(exp1);}
                 |<delete> exp1 = E0() {return sem.inst_delete(exp1);}
                 |<call> id = <identificador> "(" res_call = RES_CALL(sem.str(id.image,id.beginLine,id.beginColumn))  {return res_call;}
                 | bloque = BLOQUE() {return sem.inst_compuesta(bloque);}              
                }          
-  Inst RES_CALL(Token id_h):{Lreal_params r_params;}
+  Inst RES_CALL(StringLocalizado id_h):{LReal_params r_params;}
                         {
-                          ")" {return sem.inst_call_sin_params(sem.str(id_h.image,id_h.beginLine,id_h.beginColumn));}
-                         | r_params = REAL_PARAMS() ")" {return sem.inst_call_con_params(sem.str(id_h.image,id_h.beginLine,id_h.beginColumn),r_params);}}
+                          ")" {return sem.inst_call_sin_params(id_h);}
+                         | r_params = REAL_PARAMS() ")" {return sem.inst_call_con_params(id_h,r_params);}}
 
   LInst_aux AUX_LINST()  : {LInst linst;}
                       {linst = LINST() {return sem.linst_aux(linst);}
@@ -163,14 +170,14 @@ PARSER_END(ConstructorAST)
             
   Inst RES_IF(Exp exp_h, LInst_aux linst_aux_h)  : {LInst_aux linst_aux;}
                   { <r_else> linst_aux = AUX_LINST() <endif> {return sem.inst_if_then_else(exp_h,linst_aux_h,linst_aux);}
-                  | <endif> {return sem.inst_if_then(exp1,linst_aux_h);} }
+                  | <endif> {return sem.inst_if_then(exp_h,linst_aux_h);} }
 
-  Lreal_params REAL_PARAMS()  : {Exp exp; Lreal_params res_params;} 
+  LReal_params REAL_PARAMS()  : {Exp exp; LReal_params res_params;} 
                       {exp = E0() res_params = RES_PARAMS(sem.l_real_params_uno(exp)) {return res_params;} }
   
-  Lreal_params RES_PARAMS(Lreal_params params_h)  : {Exp exp; Lreal_params res_params;} 
+  LReal_params RES_PARAMS(LReal_params params_h)  : {Exp exp; LReal_params res_params;} 
                               {"," exp = E0() res_params = RES_PARAMS(sem.l_real_params_muchos(params_h,exp)) {return res_params;}
-                               | {return param_h;} }
+                               | {return params_h;} }
  
   Bloque BLOQUE()  : {Bloque b;} { "{" b = RBLOQUE() {return b;}}
   Bloque RBLOQUE()  : {Prog prog;}
@@ -195,7 +202,7 @@ PARSER_END(ConstructorAST)
                          {op = OP3NA()  e =E4() {return sem.exp(op,exp_h,e);}
                           |{return exp_h;} }
   Exp E4()  : {Exp e;} {"-" e = E5() {return sem.menos_unario(e);}
-                       | <not> e = E4() {return sem.Not(e);}
+                       | <not> e = E4() {return sem.c_not(e);}
                        | e = E5() {return e;}}
   Exp E5()  : {Exp e,res;} { e = E6() res = RES_RES5(e) {return res;}}
   Exp RES_RES5(Exp exp_h)  : {Exp e,res;}
@@ -204,7 +211,7 @@ PARSER_END(ConstructorAST)
 
   Exp RES5(Exp exp_h)  : {String op; Exp e; Token id;}
                          {
-                           "[" e = E0() "]"   {return sem.index(exp_h,e);}
+                           "[" e = E0() "]"   {return sem.index(e);}
                            |<punto> id = <identificador> {return sem.punto(exp_h,sem.str(id.image,id.beginLine,id.beginColumn));}
                            |<flecha> id = <identificador> {return sem.flecha(exp_h,sem.str(id.image,id.beginLine,id.beginColumn));}
                           }
@@ -213,16 +220,16 @@ PARSER_END(ConstructorAST)
   Exp E7()  : {Token t; Exp e;} 
           { t = <numeroEntero> {return sem.numEnt(sem.str(t.image,t.beginLine,t.beginColumn));}
           | t = <numeroReal> {return sem.numReal(sem.str(t.image,t.beginLine,t.beginColumn));}
-          | t = <str>  {return sem.str(sem.str(t.image,t.beginLine,t.beginColumn));}
-          | <r_true> {return sem.c_rue();}
-          | <r_false> {return sem.c_alse();}
-          | t = <identificador> {return sem.str(sem.str(t.image,t.beginLine,t.beginColumn));}
+          | t = <str>  {return sem.c_str(sem.str(t.image,t.beginLine,t.beginColumn));}
+          | <r_true> {return sem.c_true();}
+          | <r_false> {return sem.c_false();}
+          | t = <identificador> {return sem.identificador(sem.str(t.image,t.beginLine,t.beginColumn));}
           | <r_null> {return sem.c_null();} 
           | "(" e = E0() ")" {return e;}
           }
 
  
-  String OP1AI()  : {} {<and> {return "and";} | <or> {return or;}}
+  String OP1AI()  : {} {<and> {return "and";} | <or> {return "or";}}
   String OP2AI()  : {} {"!=" {return "!=";} | "==" {return "==";} | "<" {return "<";} 
                       | ">" {return ">";} | "<=" {return "<=";} | ">=" {return ">=";}}
   String OP3NA()  : {} {"*" {return "*";} | "/" {return "/";} | "%" {return "%";}}
