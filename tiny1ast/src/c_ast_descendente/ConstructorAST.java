@@ -721,7 +721,7 @@ public class ConstructorAST implements ConstructorASTConstants {
       jj_consume_token(52);
       e = E0();
       jj_consume_token(53);
-                                               {if (true) return sem.index(e);}
+                                               {if (true) return sem.index(exp_h,e);}
       break;
     case punto:
       jj_consume_token(punto);

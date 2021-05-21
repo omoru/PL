@@ -1,8 +1,7 @@
 package c_ast_descendente_manual;
 
-import java.io.FileInputStream;
+
 import java.io.Reader;
-import java.io.InputStreamReader;
 import java.io.IOException;
 
 

@@ -211,7 +211,7 @@ PARSER_END(ConstructorAST)
 
   Exp RES5(Exp exp_h)  : {String op; Exp e; Token id;}
                          {
-                           "[" e = E0() "]"   {return sem.index(e);}
+                           "[" e = E0() "]"   {return sem.index(exp_h,e);}
                            |<punto> id = <identificador> {return sem.punto(exp_h,sem.str(id.image,id.beginLine,id.beginColumn));}
                            |<flecha> id = <identificador> {return sem.flecha(exp_h,sem.str(id.image,id.beginLine,id.beginColumn));}
                           }

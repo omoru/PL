@@ -76,6 +76,7 @@ if act == null then # se ha alcanzado un punto de inserción
 if padre->nombre < nombres.nombres[i] then # insertar como hijo izquierdo
 new padre->der;
 padre->der->nombre = nombres.nombres[i];
+*padre = aaa;
 padre->der->izq= null;
 padre->der->der = null
 else # insertar como hijo derecho

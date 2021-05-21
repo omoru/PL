@@ -228,12 +228,15 @@ public class TinyASint {
     }
     
     public static class Index extends Exp{
-    	private Exp exp;
-    	public Index(Exp exp) {
+    	private Exp exp1;
+    	private Exp exp2;
+    	public Index(Exp exp1,Exp exp2) {
     		super();
-    		this.exp=exp;
+    		this.exp1=exp1;
+    		this.exp2=exp2;
     	}
-    	public Exp exp() {return exp;}
+    	public Exp exp1() {return exp1;}
+    	public Exp exp2() {return exp2;}
     	public void procesa(Procesamiento p) {
               p.procesa(this); 
         }
@@ -465,6 +468,7 @@ public class TinyASint {
     	private LInst linst;
         private LDecs ldecs;
     	public Prog_con_decs(LDecs ldecs, LInst linst) {
+    		super();
     		 this.linst = linst;
              this.ldecs = ldecs;
     		 
@@ -479,11 +483,10 @@ public class TinyASint {
     public static class Prog_sin_decs extends Prog{
     	private LInst linst;
     	public Prog_sin_decs(LInst linst) {
+    		 super();
     		 this.linst = linst;    		 
     	 }
     	 public LInst linst() {return linst;}
-       
-    	
     	 public void procesa(Procesamiento p) {
              p.procesa(this); 
           }    
@@ -1207,8 +1210,8 @@ public class TinyASint {
     	return new R_str(id);
     }
     
-    public Exp index(Exp arg0) {
-    	return new Index(arg0);
+    public Exp index(Exp arg0,Exp arg1) {
+    	return new Index(arg0,arg1);
     }
     public Exp indireccion(Exp arg0) {
     	return new Indireccion(arg0);

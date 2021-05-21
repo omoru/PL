@@ -10,13 +10,27 @@ import asint.TinyASint.Bloque_vacio;
 import asint.TinyASint.Blt;
 import asint.TinyASint.Bne;
 import asint.TinyASint.Campo;
-import asint.TinyASint.Dec;
+import asint.TinyASint.Dec_Proc_con_params;
+import asint.TinyASint.Dec_Proc_sin_params;
+import asint.TinyASint.Dec_Type;
+import asint.TinyASint.Dec_Var;
 import asint.TinyASint.Div;
 import asint.TinyASint.Flecha;
 import asint.TinyASint.Id;
 import asint.TinyASint.Index;
 import asint.TinyASint.Indireccion;
-import asint.TinyASint.Inst;
+import asint.TinyASint.Inst_asig;
+import asint.TinyASint.Inst_call_con_params;
+import asint.TinyASint.Inst_call_sin_params;
+import asint.TinyASint.Inst_compuesta;
+import asint.TinyASint.Inst_delete;
+import asint.TinyASint.Inst_if_then;
+import asint.TinyASint.Inst_if_then_else;
+import asint.TinyASint.Inst_new;
+import asint.TinyASint.Inst_nl;
+import asint.TinyASint.Inst_read;
+import asint.TinyASint.Inst_while;
+import asint.TinyASint.Inst_write;
 import asint.TinyASint.LCampos_muchos;
 import asint.TinyASint.LCampos_uno;
 import asint.TinyASint.LDecs_muchas;
@@ -37,7 +51,6 @@ import asint.TinyASint.Num;
 import asint.TinyASint.Or;
 import asint.TinyASint.Param_amp;
 import asint.TinyASint.Param_sin_amp;
-import asint.TinyASint.Prog;
 import asint.TinyASint.Prog_con_decs;
 import asint.TinyASint.Prog_sin_decs;
 import asint.TinyASint.Punto;
@@ -94,11 +107,6 @@ public class ProcesamientoPorDefecto implements Procesamiento {
 		
 	}
 
-	@Override
-	public void procesa(Dec dec) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void procesa(Menos_unario menos_unario) {
@@ -197,16 +205,17 @@ public class ProcesamientoPorDefecto implements Procesamiento {
 	}
 
 	@Override
-	public void procesa(Prog prog) {
+	public void procesa(Prog_con_decs prog) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void procesa(Inst inst) {
+	public void procesa(Prog_sin_decs prog) {
 		// TODO Auto-generated method stub
 		
 	}
+
 
 	@Override
 	public void procesa(Tipo_int tipo_int) {
@@ -377,15 +386,100 @@ public class ProcesamientoPorDefecto implements Procesamiento {
 	}
 
 	@Override
-	public void procesa(Prog_con_decs prog) {
+	public void procesa(Dec_Var dec_var) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void procesa(Prog_sin_decs prog) {
+	public void procesa(Dec_Proc_sin_params dec_Proc_sin_params) {
 		// TODO Auto-generated method stub
 		
 	}
-   
+
+	@Override
+	public void procesa(Dec_Proc_con_params dec_Proc_con_params) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Dec_Type dec_Type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Inst_asig inst) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Inst_if_then inst_if_then) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Inst_if_then_else inst_if_then_else) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Inst_while inst_while) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Inst_read inst_read) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Inst_write inst_write) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Inst_nl inst_nl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Inst_new inst_new) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Inst_delete inst_delete) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Inst_call_con_params inst_call_con_params) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Inst_call_sin_params inst_call_sin_params) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Inst_compuesta inst_compuesta) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 }
