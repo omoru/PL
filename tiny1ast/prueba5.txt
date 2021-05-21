@@ -110,7 +110,7 @@ endif
 } # Fin de procedimiento escribe_nombres
 &&
 # Programa principal
-call lee_nombres(nombres);
+call lee_nombres(nombres,3,1);
 call construye_arbol();
 write "Listado de nombres ordenado"; nl;
 write "---------------------------"; nl;

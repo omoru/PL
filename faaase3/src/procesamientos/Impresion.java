@@ -36,7 +36,7 @@ public class Impresion extends ProcesamientoPorDefecto{
 	}
 	public void procesa(Prog prog) {
 		prog.ldecs().procesa(this);
-		System.out.print(" ");
+		System.out.println();
 		System.out.println("&&");
 		prog.linst().procesa(this);
 		System.out.println();

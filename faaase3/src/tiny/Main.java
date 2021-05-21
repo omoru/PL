@@ -12,9 +12,11 @@ import java.io.Reader;
 public class Main {
    public static void main(String[] args) throws Exception {
          Prog prog = null;
+  	   	System.out.println("---------------------Ejecutando c_ast descendente manual:----------------");
          prog = ejecuta_descendente_manual(args[0]);
          prog.procesa(new Impresion());
-         System.out.println("ok");
+         System.out.println();
+         System.out.println("---Success---");
            
    }
    
