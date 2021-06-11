@@ -245,7 +245,7 @@ public class Comprueba_tipos extends ProcesamientoPorDefecto {
 		inst.exp1().procesa(this);
 		inst.exp2().procesa(this);
 		if (asignacionCompatible(inst.exp1(), inst.exp2()))
-			if (esDesignador(inst.exp1()))
+			if (c_data.esDesignador(inst.exp1()))
 				c_data.tipos.put(inst, c_data.ok);
 			else
 				c_data.tipos.put(inst, c_data.error);
@@ -305,7 +305,7 @@ public class Comprueba_tipos extends ProcesamientoPorDefecto {
 		inst.exp().procesa(this);
 		Tipo type = v_data.ref(c_data.tipos.get(inst.exp()));
 		if ((type instanceof Tipo_int || type instanceof Tipo_String || type instanceof Tipo_real)
-				&& esDesignador(inst.exp())) {
+				&& c_data.esDesignador(inst.exp())) {
 			c_data.tipos.put(inst, c_data.ok);
 		} else
 			c_data.tipos.put(inst, c_data.error);
@@ -787,12 +787,7 @@ public class Comprueba_tipos extends ProcesamientoPorDefecto {
 	}
 	
 
-	private boolean esDesignador(Exp exp) {
-		if(exp instanceof Id || exp instanceof Indireccion ||  exp instanceof Index
-				||  exp instanceof Punto ||  exp instanceof Flecha)
-			return true;	
-		return false;
-	}
+
 	private boolean camposDuplicados(LCampos lcampos) {
 		// TODO Auto-generated method stub
 		return false;

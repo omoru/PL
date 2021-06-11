@@ -3,6 +3,12 @@ package tables;
 import java.util.HashMap;
 import java.util.Map;
 
+import asint.TinyASint.Exp;
+import asint.TinyASint.Flecha;
+import asint.TinyASint.Id;
+import asint.TinyASint.Index;
+import asint.TinyASint.Indireccion;
+import asint.TinyASint.Punto;
 import asint.TinyASint.Tipo;
 import asint.TinyASint.Tipo_Reg;
 import asint.TinyASint.Tipo_String;
@@ -31,6 +37,13 @@ public class Comp_tipos_data {
 		this.t_int = new Tipo_int();
 		this.t_string = new Tipo_String();
 		
+	}
+	
+	public boolean esDesignador(Exp exp) {
+		if(exp instanceof Id || exp instanceof Indireccion ||  exp instanceof Index
+				||  exp instanceof Punto ||  exp instanceof Flecha)
+			return true;	
+		return false;
 	}
 
 	
