@@ -7,7 +7,8 @@ array [50] of string nombres_r
 } tListaNombres;
 var tListaNombres nombres; # Aquí se guardarán los nombres leídos (max. 50)
 var int i;
-var miBool j
+var miBool j;
+var miBool x
 &&
 
 

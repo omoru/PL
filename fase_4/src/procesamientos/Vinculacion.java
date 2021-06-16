@@ -144,8 +144,8 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 				return;
 			}
 		}
-		System.out.println("Error en tipo_id / vincula_fase1");
-		throw new UnsupportedOperationException();
+		v_data.insertaError("Error al buscar el id: " + inst.id().toString() +
+				" en la ts de la llamada call (con params) / vincula", inst.id().fila(), inst.id().col());
 	}
 
 	public void procesa(Inst_call_sin_params inst) {
@@ -157,8 +157,9 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 				return;
 			}
 		}
-		System.out.println("Error en tipo_id / vincula_fase1");
-		throw new UnsupportedOperationException();
+		v_data.insertaError("Error al buscar el id: " + inst.id().toString() +
+				" en la ts de la llamada call (sin params) / vincula", inst.id().fila(), inst.id().col());
+	
 
 	}
 
@@ -178,21 +179,15 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 	public void procesa(Inst_if_then inst) {
 		inst.exp().procesa(this);
 		inst.linst_aux().procesa(this);
-
 	}
 
 	public void procesa(Inst_if_then_else inst) {
-
 		inst.exp().procesa(this);
-
 		inst.linst_aux1().procesa(this);
-
 		inst.linst_aux2().procesa(this);
-
 	}
 
 	public void procesa(Inst_nl inst) {
-
 	}
 
 	public void procesa(Inst_new inst) {
@@ -223,10 +218,8 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 				return;
 			}
 		}
-		System.out.println("Error en tipo_id / vincula_fase1");
-		throw new UnsupportedOperationException();
-
-	}
+		v_data.insertaError("Error al buscar el id: " + id.id().toString() +
+				" en la ts de la llamada call (sin params) / vincula", id.id().fila(), id.id().col());	}
 
 	public void procesa(Suma exp) {
 		exp.arg0().procesa(this);
@@ -362,7 +355,7 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 		punto.exp().procesa(this);
 		Object vinculo_exp = v_data.vinculos.get(punto.exp());
 		
-		if (vinculo_exp instanceof Dec_Var) {
+		/*if (vinculo_exp instanceof Dec_Var) {
 
 			Dec_Var type_vinculo_exp = (Dec_Var) vinculo_exp;
 			if (type_vinculo_exp.tipo() instanceof Tipo_Reg) {
@@ -392,7 +385,7 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 			} else
 				v_data.insertaError("El tipo base de " + punto.id().toString() + " no es de tipo registro.",
 						punto.id().fila(), punto.id().col());
-		} else if (vinculo_exp instanceof Dec_Type) {
+		} else*/ if (vinculo_exp instanceof Dec_Type) {
 
 			Dec_Type type_vinculo_exp = (Dec_Type) vinculo_exp;
 			if (type_vinculo_exp.tipo() instanceof Tipo_Reg) {
@@ -524,8 +517,8 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 					return;
 				}
 			}
-			System.out.println("Error en tipo_id / vincula_fase1");
-			throw new UnsupportedOperationException();
+			v_data.insertaError("Error al buscar el id: " + tipo_id.id().toString() +
+					" en la ts / vinculacion_fase1", tipo_id.id().fila(), tipo_id.id().col());	
 
 		}
 

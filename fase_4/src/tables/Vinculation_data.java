@@ -70,8 +70,7 @@ public class Vinculation_data {
 		return null;
 	}
 	public Tipo refNodo(Tipo tipo) {
-		// TODO Auto-generated method stub
-		
+				
 	}	
 	
 }

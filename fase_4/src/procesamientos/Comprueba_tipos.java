@@ -785,8 +785,6 @@ public class Comprueba_tipos extends ProcesamientoPorDefecto {
 			return true;
 		return true;
 	}
-	
-
 
 	private boolean camposDuplicados(LCampos lcampos) {
 		// TODO Auto-generated method stub

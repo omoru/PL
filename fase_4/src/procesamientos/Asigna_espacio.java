@@ -466,13 +466,13 @@ public class Asigna_espacio extends ProcesamientoPorDefecto{
 	public void procesa(Tipo_Id tipo_id) {//----------------------------------------------------------------------
 		
 		Object vinculo = v_data.vinculos.get(tipo_id);
-		/*if(vinculo instanceof Dec_Var) {
+		if(vinculo instanceof Dec_Var) {
 			Dec_Var dec = (Dec_Var)vinculo;
 			dec.tipo().procesa(this);
 			int tam = a_data.tamaños.get(dec.tipo());
 			this.a_data.tamaños.put(tipo_id, tam);
 		}
-		*/
+		
 		if(vinculo instanceof Dec_Type) {
 			Dec_Type dec = (Dec_Type)vinculo;
 			dec.tipo().procesa(this);
