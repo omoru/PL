@@ -5,8 +5,10 @@ int cont;
 array [50] of string nombres_r
 
 } tListaNombres;
+type pointer TListaNombres puntero;
 var tListaNombres nombres; # Aquí se guardarán los nombres leídos (max. 50)
 var int i;
+var puntero xxx;
 var miBool j;
 var miBool x
 &&

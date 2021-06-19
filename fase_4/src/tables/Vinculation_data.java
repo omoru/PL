@@ -56,21 +56,23 @@ public class Vinculation_data {
 		if(!(tipo instanceof Tipo_Id)) {
 			return tipo;		
 		}
-		
-		Tipo_Id type = (Tipo_Id)tipo;
-		ListIterator<Map<String, Object>> it = tablaDeSimbolos.listIterator(tablaDeSimbolos.size());
-		while (it.hasPrevious()){
-			Object e = it.previous().get(type.id().toString());
-			Dec_Type sig = (Dec_Type) e;
-			if (e != null){
-				return ref(sig.tipo());
-			}
+		Object vinculo = vinculos.get(tipo);
+		if(vinculo instanceof Dec_Type) {
+			Dec_Type dec_type = (Dec_Type) vinculo;
+			return ref(dec_type.tipo());
 		}
-		
 		return null;
 	}
-	public Tipo refNodo(Tipo tipo) {
-				
+	public Object refNodo(Object o) {
+		if(!(o instanceof Tipo_Id)) {
+			return o;		
+		}
+		Object vinculo = vinculos.get(o);
+		if(vinculo instanceof Dec_Type) {
+			Dec_Type dec_type = (Dec_Type) vinculo;
+			return refNodo(dec_type.tipo());
+		}
+		return null;
 	}	
 	
 }

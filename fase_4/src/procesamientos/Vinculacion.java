@@ -625,7 +625,6 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 
 		public void procesa(Tipo_Puntero tipo_p) {
 			ListIterator<Map<String, Object>> it = v_data.tablaDeSimbolos.listIterator(v_data.tablaDeSimbolos.size());
-
 			if (tipo_p.tipo() instanceof Tipo_Id) {
 				Tipo_Id t = (Tipo_Id) tipo_p.tipo();
 				while (it.hasPrevious()) {

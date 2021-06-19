@@ -8,6 +8,7 @@ import asint.TinyASint.Tipo_Reg;
 import asint.TinyASint.Tipo_String;
 import asint.TinyASint.Tipo_bool;
 import asint.TinyASint.Tipo_int;
+import asint.TinyASint.Tipo_null;
 import asint.TinyASint.Tipo_real;
 import asint.TinyASint.Resta;
 import asint.TinyASint.Mul;
@@ -141,5 +142,7 @@ public interface Procesamiento {
 	void procesa(Inst_delete inst_delete);
 	void procesa(Inst_call_con_params inst_call_con_params);
 	void procesa(Inst_call_sin_params inst_call_sin_params);
-	void procesa(Inst_compuesta inst_compuesta);  
+	void procesa(Inst_compuesta inst_compuesta);
+	void procesa(Tipo_null tipo_null);
+
 }

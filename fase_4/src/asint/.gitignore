@@ -92,3 +92,6 @@
 /TinyASint$Tipo_int.class
 /TinyASint$Tipo_real.class
 /TinyASint.class
+/TinyASint$error.class
+/TinyASint$ok.class
+/TinyASint$Tipo_null.class

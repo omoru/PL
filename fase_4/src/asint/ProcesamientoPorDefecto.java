@@ -68,6 +68,7 @@ import asint.TinyASint.Tipo_Reg;
 import asint.TinyASint.Tipo_String;
 import asint.TinyASint.Tipo_bool;
 import asint.TinyASint.Tipo_int;
+import asint.TinyASint.Tipo_null;
 import asint.TinyASint.Tipo_real;
 
 public class ProcesamientoPorDefecto implements Procesamiento {
@@ -486,6 +487,12 @@ public class ProcesamientoPorDefecto implements Procesamiento {
 	@Override
 	public void procesa(NumReal exp) {
 		
+		
+	}
+
+	@Override
+	public void procesa(Tipo_null tipo_null) {
+		// TODO Auto-generated method stub
 		
 	}
 

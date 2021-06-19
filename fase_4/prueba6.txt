@@ -1,0 +1,41 @@
+type int miBool;
+type pointer tNodo tArbol;
+type record {
+ string nombre;
+ tArbol izq;
+ tArbol der
+ } tNodo;
+type	 record {
+   int cont;
+   array [50] of string nombres_r
+} tListaNombres;
+
+var tListaNombres nombres;
+var tArbol arbol; 
+
+var int i;
+var tListaNombres l1;
+var tListaNombres l2;
+var miBool x;
+
+proc escribe_nombres(tArbol arbol) {
+ if arbol != null then
+ call escribe_nombres(arbol->izq);
+ write arbol->nombre; nl;
+ call escribe_nombres(arbol->der)
+ endif
+ } # Fin de procedimiento escribe_nombres
+
+&&
+
+write "Listado de nombres ordenado"; nl;
+ write "---------------------------"; nl;
+ call escribe_nombres(arbol) ;
+read l1.cont;
+ l1.cont = l2.cont;
+l1.nombres_r = l2.nombres_r;
+l1 = l2;
+ i = x + 3;
+ i = 2 + 3;
+ x = i
+ 

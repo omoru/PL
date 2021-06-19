@@ -4,9 +4,11 @@ package tiny;
 import asint.TinyASint.Prog;
 import c_ast_ascendente.AnalizadorLexicoTiny;
 import procesamientos.Asigna_espacio;
+import procesamientos.Comprueba_tipos;
 import procesamientos.Impresion;
 import procesamientos.Vinculacion;
 import tables.Asig_esp_data;
+import tables.Comp_tipos_data;
 import tables.Vinculation_data;
 
 import java.io.FileInputStream;
@@ -39,6 +41,13 @@ public class Main {
        prog.procesa(new Vinculacion(v_data));
        System.out.println();  
 
+       System.out.println("Procesamiento de comprobacion de tipos: ");
+       Comp_tipos_data c_data = new Comp_tipos_data();
+       prog.procesa(new Comprueba_tipos(v_data, c_data));
+       if(c_data.tipos.get(prog) == c_data.ok)
+    	   System.out.println("Comprobacion de tipos ok");
+       System.out.println();  
+       
        System.out.println("Procesamiento de asignacion de espacio: ");
        Asig_esp_data a_data = new Asig_esp_data();
        prog.procesa(new Asigna_espacio(v_data, a_data));

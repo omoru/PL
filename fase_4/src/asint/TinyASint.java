@@ -648,6 +648,15 @@ public class TinyASint {
 		public abstract void procesa(Procesamiento p);
 	}
 
+	public static class Tipo_null extends Tipo {
+		public Tipo_null() {
+			super();
+		}
+
+		public void procesa(Procesamiento p) {
+			p.procesa(this);
+		}
+	}
 	public static class Tipo_int extends Tipo {
 		public Tipo_int() {
 			super();
@@ -696,6 +705,10 @@ public class TinyASint {
 			this.id = id;
 		}
 
+		public Tipo_Id() {
+			// TODO Auto-generated constructor stub
+		}
+
 		public StringLocalizado id() {
 			return id;
 		}
@@ -732,6 +745,10 @@ public class TinyASint {
 			this.t = t;
 		}
 
+		public Tipo_Array() {
+			// TODO Auto-generated constructor stub
+		}
+
 		public Tipo tipo() {
 			return t;
 		}
@@ -751,6 +768,10 @@ public class TinyASint {
 		public Tipo_Reg(LCampos lcampos) {
 			super();
 			this.lcampos = lcampos;
+		}
+
+		public Tipo_Reg() {
+			// TODO Auto-generated constructor stub
 		}
 
 		public LCampos lcampos() {
@@ -1435,6 +1456,9 @@ public class TinyASint {
 
 	public Tipo tipo_Id(StringLocalizado id) {
 		return new Tipo_Id(id);
+	}
+	public Tipo tipo_Null() {
+		return new Tipo_null();
 	}
 
 	public Tipo tipo_Puntero(Tipo t) {
