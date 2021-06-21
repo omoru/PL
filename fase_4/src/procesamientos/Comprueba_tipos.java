@@ -178,6 +178,8 @@ public class Comprueba_tipos extends ProcesamientoPorDefecto {
 
 	}
 
+
+
 	//TODO
 	public void procesa(Tipo_int tipo_int) {
 		c_data.tipos.put(tipo_int, c_data.t_int);//////////////////////////////////tipo_int o t_int como primer parametro??
@@ -582,7 +584,8 @@ public class Comprueba_tipos extends ProcesamientoPorDefecto {
 		Tipo tipo2 = (Tipo)c_data.tipos.get(ind.exp2());
 		if(v_data.ref(tipo2) instanceof Tipo_int && v_data.ref(tipo1) instanceof Tipo_Array) {
 			Tipo_Array tipo_array = (Tipo_Array)v_data.ref(tipo1);
-			c_data.tipos.put(ind, tipo_array.tipo());/////////////////TODO/////////////////////////////////////////////////////////////
+			c_data.tipos.put(ind, v_data.ref(tipo_array.tipo()));/////////////////TODO/////////////////////////////////////////////////////////////
+
 		}
 		else
 			c_data.tipos.put(ind, c_data.error);
@@ -593,6 +596,7 @@ public class Comprueba_tipos extends ProcesamientoPorDefecto {
 	public void procesa(Flecha flecha) {
 		flecha.exp().procesa(this);
 		Tipo tipo_exp = (Tipo)c_data.tipos.get(flecha.exp());
+		
 		Tipo tipo = v_data.ref(tipo_exp);
 		if(tipo instanceof Tipo_Puntero) {
 			Tipo_Puntero t_puntero = (Tipo_Puntero)tipo;
@@ -602,6 +606,7 @@ public class Comprueba_tipos extends ProcesamientoPorDefecto {
 				Campo c = buscaCampo(flecha.id().toString(), tipo_reg.lcampos());
 				if(c!=null) {
 					c_data.tipos.put(flecha, c.tipo());
+					System.out.println((Tipo)c_data.tipos.get(flecha));
 				}
 				else {
 					c_data.tipos.put(flecha, c_data.error);
@@ -708,8 +713,9 @@ public class Comprueba_tipos extends ProcesamientoPorDefecto {
 		}
 		tabla_contexto.put(exp1, exp2);
 		
-	
+		
 		Tipo tipo1 = v_data.ref((Tipo)c_data.tipos.get(exp1));
+
 		Tipo tipo2 = v_data.ref((Tipo)c_data.tipos.get(exp2));
 		if((tipo1 instanceof Tipo_int && tipo2 instanceof Tipo_int)
 				|| (tipo1 instanceof Tipo_real && (tipo2 instanceof Tipo_int || tipo2 instanceof Tipo_real))

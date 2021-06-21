@@ -1,6 +1,35 @@
-var int    peso;
- var bool pesado
- 		&&
- 		#peso = (45.001 * 12e-56) / -2.05;
-    peso = (45.001 * (-12e-56 * 0.0)) / -2.05;
- pesado = (peso > 0) or (peso / 2 <= -0.0e-1) 
+
+type record {
+ string nombre;
+ int izq;
+ int der
+ } tNodo;
+type	 record {
+   int cont;
+   array [50] of int nombres_r
+} tListaNombres;
+
+var tListaNombres nombres;
+var tNodo arbol; 
+
+var int i;
+var tListaNombres l1;
+var tListaNombres l2
+
+
+&&
+
+write "Listado de nombres ordenado"; nl;
+ write "---------------------------"; nl;
+ l1.cont = 1;
+l2.cont=1;
+l2 = l1;
+l2.cont = l1.cont * 3;
+ i = 3;
+
+
+
+
+ i = i + 3
+
+ 

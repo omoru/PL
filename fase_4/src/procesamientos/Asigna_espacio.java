@@ -345,8 +345,10 @@ public class Asigna_espacio extends ProcesamientoPorDefecto{
 	}
 
 	public void procesa(NumEnt exp) {
+		a_data.tamaños.put(exp, 1);
 	}
 	public void procesa(NumReal exp) {
+		a_data.tamaños.put(exp, 1);
 	}
 	public void procesa(Menos_unario menos_unario) {
 		menos_unario.arg0().procesa(this);
@@ -442,7 +444,6 @@ public class Asigna_espacio extends ProcesamientoPorDefecto{
 
 	public void procesa(Index ind) {
 		ind.exp1().procesa(this);
-		
 		ind.exp2().procesa(this);
 		
 	}

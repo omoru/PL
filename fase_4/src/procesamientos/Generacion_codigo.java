@@ -16,7 +16,7 @@ import asint.TinyASint.Dec_Proc_sin_params;
 import asint.TinyASint.Dec_Type;
 import asint.TinyASint.Dec_Var;
 import asint.TinyASint.Div;
-
+import asint.TinyASint.Exp;
 import asint.TinyASint.Flecha;
 import asint.TinyASint.Id;
 import asint.TinyASint.Index;
@@ -33,6 +33,7 @@ import asint.TinyASint.Inst_nl;
 import asint.TinyASint.Inst_read;
 import asint.TinyASint.Inst_while;
 import asint.TinyASint.Inst_write;
+import asint.TinyASint.LCampos;
 import asint.TinyASint.LCampos_muchos;
 import asint.TinyASint.LCampos_uno;
 import asint.TinyASint.LDecs_muchas;
@@ -85,11 +86,12 @@ public class Generacion_codigo extends ProcesamientoPorDefecto {
 	private Comp_tipos_data c_data;
 	private Etiq_data e_data;
 
-	public Generacion_codigo(Etiq_data e_data, Comp_tipos_data c_data, Vinculation_data v_data, Asig_esp_data a_data) {
+	public Generacion_codigo(MaquinaP m,Etiq_data e_data, Comp_tipos_data c_data, Vinculation_data v_data, Asig_esp_data a_data) {
 		this.v_data = v_data;
 		this.a_data = a_data;
 		this.c_data = c_data;
 		this.e_data = e_data;
+		this.m = m;
 	}
 
 	public void procesa(Prog_con_decs prog) {
@@ -131,14 +133,15 @@ public class Generacion_codigo extends ProcesamientoPorDefecto {
 		dec.lparams().procesa(this);
 
 		dec.bloque().procesa(this);
-		m.irInd();
+		m.ponInstruccion(m.irInd());
 
 	}
 
 	public void procesa(Dec_Proc_sin_params dec) {
 
 		dec.bloque().procesa(this);
-		m.irInd();
+		m.ponInstruccion(m.irInd());
+		
 
 	}
 
@@ -154,15 +157,17 @@ public class Generacion_codigo extends ProcesamientoPorDefecto {
 
 	public void procesa(Param_amp param) {
 		param.tipo().procesa(this);
-		m.alloc(a_data.tamaños.get(param.tipo()));
-		m.apilaPuntero(a_data.direcciones.get(param));
+		m.ponInstruccion(m.alloc(a_data.tamaños.get(param.tipo())));
+		m.ponInstruccion(m.apilaPuntero(a_data.direcciones.get(param)));
 	}
 
 	public void procesa(Param_sin_amp param) {
 		param.tipo().procesa(this);
-		m.alloc(a_data.tamaños.get(param.tipo()));
-		m.apilaPuntero(a_data.direcciones.get(param));
+		m.ponInstruccion(m.alloc(a_data.tamaños.get(param.tipo())));
+		m.ponInstruccion(m.apilaPuntero(a_data.direcciones.get(param)));
+		
 	}
+
 
 	public void procesa(Tipo_int tipo_int) {
 
@@ -185,7 +190,7 @@ public class Generacion_codigo extends ProcesamientoPorDefecto {
 	}
 
 	public void procesa(Tipo_Puntero tipo_p) {
-		a_data.tamaños.put(tipo_p, 1);
+	
 
 	}
 
@@ -229,29 +234,32 @@ public class Generacion_codigo extends ProcesamientoPorDefecto {
 	public void procesa(Inst_asig inst) {
 		inst.exp1().procesa(this);
 		inst.exp2().procesa(this);
+		
 		if (c_data.tipos.get(inst.exp1()) instanceof Tipo_real && c_data.tipos.get(inst.exp2()) instanceof Tipo_int) {
 			if (c_data.esDesignador(inst.exp2()))
-				m.fetch();
-			m.intToReal();
-			m.store();
+				m.ponInstruccion(m.fetch());
+			m.ponInstruccion(m.intToReal());
+			m.ponInstruccion(m.store());
 		} else {
 			if (c_data.esDesignador(inst.exp2())) {
 				Object vinculo = v_data.vinculos.get(inst.exp1());
-				Tipo tipo = c_data.tipos.get(vinculo);
+				Tipo tipo = (Tipo) c_data.tipos.get(vinculo);
 				Integer tam = a_data.tamaños.get(tipo);
-				m.copy(tam);
+				m.ponInstruccion(m.copy(tam));
 			} else
-				m.store();
+				m.ponInstruccion(m.store());
 
 		}
+		
+
 	}
 
 	public void procesa(Inst_if_then inst) {
 
 		inst.exp().procesa(this);
 		if (c_data.esDesignador(inst.exp()))
-			m.fetch();
-		m.irF(e_data.etqf.get(inst));
+			m.ponInstruccion(m.fetch());
+		m.ponInstruccion(m.irF(e_data.etqf.get(inst)));
 		inst.linst_aux().procesa(this);
 
 	}
@@ -259,10 +267,10 @@ public class Generacion_codigo extends ProcesamientoPorDefecto {
 	public void procesa(Inst_if_then_else inst) {
 		inst.exp().procesa(this);
 		if (c_data.esDesignador(inst.exp()))
-			m.fetch();
-		m.irF(e_data.etqi.get(inst.linst_aux2()));
+			m.ponInstruccion(m.fetch());
+		m.ponInstruccion(m.irF(e_data.etqi.get(inst.linst_aux2())));
 		inst.linst_aux1().procesa(this);
-		m.irA(e_data.etqf.get(inst) + 1);
+		m.ponInstruccion(m.irA(e_data.etqf.get(inst) + 1));
 		inst.linst_aux2().procesa(this);
 
 	}
@@ -275,56 +283,63 @@ public class Generacion_codigo extends ProcesamientoPorDefecto {
 
 		inst.exp().procesa(this);
 		if (c_data.esDesignador(inst.exp()))
-			m.fetch();
-		m.irF(e_data.etqf.get(inst) + 1);
+			m.ponInstruccion(m.fetch());
+		m.ponInstruccion(m.irF(e_data.etqf.get(inst) + 1));
 		inst.linst_aux().procesa(this);
 
 	}
 
 	public void procesa(Inst_read inst) {
 		inst.exp().procesa(this);
-		m.read();
-		m.store();
+		Object v = v_data.vinculos.get(inst.exp());
+		Tipo tipo = (Tipo) c_data.tipos.get(v);
+		if(tipo instanceof Tipo_int)
+			m.ponInstruccion(m.readInt());
+		else if(tipo instanceof Tipo_real)
+			m.ponInstruccion(m.readReal());
+		else
+			m.ponInstruccion(m.read());
+		m.ponInstruccion(m.store());
 	}
 
 	public void procesa(Inst_write inst) {
 
 		inst.exp().procesa(this);
 		if (c_data.esDesignador(inst.exp()))
-			m.fetch();
-		m.write();
+			m.ponInstruccion(m.fetch());
+		m.ponInstruccion(m.write());
 	}
 
 	public void procesa(Inst_nl inst) {
-		m.writeNL();
+		m.ponInstruccion(m.writeNL());
 	}
 
 	public void procesa(Inst_new inst) {
 
 		inst.exp().procesa(this);
 		Object vinculo = v_data.vinculos.get(inst.exp());
-		Tipo tipo = c_data.tipos.get(vinculo);
-		m.alloc(a_data.tamaños.get(tipo));
+		Tipo tipo = (Tipo) c_data.tipos.get(vinculo);
+		m.ponInstruccion(m.alloc(a_data.tamaños.get(tipo)));
 	}
 
 	public void procesa(Inst_delete inst) {
 		inst.exp().procesa(this);
 		Object vinculo = v_data.vinculos.get(inst.exp());
-		Tipo tipo = c_data.tipos.get(vinculo);
-		m.dealloc(a_data.tamaños.get(tipo));
+		Tipo tipo = (Tipo) c_data.tipos.get(vinculo);
+		m.ponInstruccion(m.dealloc(a_data.tamaños.get(tipo)));
 	}
 
 	public void procesa(Inst_call_con_params inst) {
-		m.apilaInt(e_data.etqf.get(inst));
+		m.ponInstruccion(m.apilaInt(e_data.etqf.get(inst)));
 		inst.real_params().procesa(this);
 		Object vinculo = v_data.vinculos.get(inst);
-		m.irA(a_data.direcciones.get(vinculo));
+		m.ponInstruccion(m.irA(a_data.direcciones.get(vinculo)));
 	}
 
 	public void procesa(Inst_call_sin_params inst) {
-		m.apilaInt(e_data.etqf.get(inst));
+		m.ponInstruccion(m.apilaInt(e_data.etqf.get(inst)));
 		Object vinculo = v_data.vinculos.get(inst);
-		m.irA(a_data.direcciones.get(vinculo));
+		m.ponInstruccion(m.irA(a_data.direcciones.get(vinculo)));
 	}
 
 	public void procesa(LReal_Params_uno params) {
@@ -349,217 +364,210 @@ public class Generacion_codigo extends ProcesamientoPorDefecto {
 	public void procesa(Suma exp) {
 		exp.arg0().procesa(this);
 		if (c_data.esDesignador(exp.arg0()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 		if (c_data.tipos.get(exp) instanceof Tipo_real && c_data.tipos.get(exp.arg0()) instanceof Tipo_int)
-			m.intToReal();
+			m.ponInstruccion(m.intToReal());
 		exp.arg1().procesa(this);
 		if (c_data.esDesignador(exp.arg1()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 		if (c_data.tipos.get(exp) instanceof Tipo_real && c_data.tipos.get(exp.arg1()) instanceof Tipo_int)
-			m.intToReal();
-		m.suma();
+			m.ponInstruccion(m.intToReal());
+		m.ponInstruccion(m.suma());
 
 	}
 
 	public void procesa(Resta exp) {
 		exp.arg0().procesa(this);
 		if (c_data.esDesignador(exp.arg0()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 		if (c_data.tipos.get(exp) instanceof Tipo_real && c_data.tipos.get(exp.arg0()) instanceof Tipo_int)
-			m.intToReal();
+			m.ponInstruccion(m.intToReal());
 		exp.arg1().procesa(this);
 		if (c_data.esDesignador(exp.arg1()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 		if (c_data.tipos.get(exp) instanceof Tipo_real && c_data.tipos.get(exp.arg1()) instanceof Tipo_int)
-			m.intToReal();
-		m.resta();
+			m.ponInstruccion(m.intToReal());
+		m.ponInstruccion(m.resta());
 
 	}
 
 	public void procesa(Mul exp) {
 		exp.arg0().procesa(this);
 		if (c_data.esDesignador(exp.arg0()))
-			m.fetch();
-		if (c_data.tipos.get(exp) instanceof Tipo_real && c_data.tipos.get(exp.arg0()) instanceof Tipo_int)
-			m.intToReal();
+			m.ponInstruccion(m.fetch());
+		if (c_data.tipos.get(exp) instanceof Tipo_real)
+			if(c_data.tipos.get(exp.arg0()) instanceof Tipo_int)
+				m.ponInstruccion(m.intToReal());
 		exp.arg1().procesa(this);
 		if (c_data.esDesignador(exp.arg1()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 		if (c_data.tipos.get(exp) instanceof Tipo_real && c_data.tipos.get(exp.arg1()) instanceof Tipo_int)
-			m.intToReal();
-		m.mul();
+			m.ponInstruccion(m.intToReal());
+		m.ponInstruccion(m.mul());
 	}
 
 	public void procesa(Div exp) {
 		exp.arg0().procesa(this);
 		if (c_data.esDesignador(exp.arg0()))
-			m.fetch();
-		if (c_data.tipos.get(exp) instanceof Tipo_real && c_data.tipos.get(exp.arg0()) instanceof Tipo_int)
-			m.intToReal();
+			m.ponInstruccion(m.fetch());
+		if (c_data.tipos.get(exp) instanceof Tipo_real)
+			if(c_data.tipos.get(exp.arg0()) instanceof Tipo_int)
+				m.ponInstruccion(m.intToReal());
 		exp.arg1().procesa(this);
 		if (c_data.esDesignador(exp.arg1()))
-			m.fetch();
-		if (c_data.tipos.get(exp) instanceof Tipo_real && c_data.tipos.get(exp.arg1()) instanceof Tipo_int)
-			m.intToReal();
-		m.div();
+			m.ponInstruccion(m.fetch());
+		if (c_data.tipos.get(exp) instanceof Tipo_real)
+			if( c_data.tipos.get(exp.arg1()) instanceof Tipo_int)
+				m.ponInstruccion(m.intToReal());
+		m.ponInstruccion(m.div());
 	}
 
 	public void procesa(Mod exp) {
 		exp.arg0().procesa(this);
 		if (c_data.esDesignador(exp.arg0()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 		exp.arg1().procesa(this);
 		if (c_data.esDesignador(exp.arg1()))
-			m.fetch();
-		m.mod();
+			m.ponInstruccion(m.fetch());
+		m.ponInstruccion(m.mod());
 
 	}
 
 	public void procesa(NumEnt exp) {
-		m.apilaEntero(exp.num());
+		m.ponInstruccion(m.apilaInt(Integer.parseInt(exp.num().toString())));
 	}
 
 	public void procesa(NumReal exp) {
-		m.apilaReal(exp.num());
+		m.ponInstruccion(m.apilaReal(Double.parseDouble(exp.num().toString())));
 	}
 
 	public void procesa(Menos_unario menos_unario) {
 		menos_unario.arg0().procesa(this);
 		if (c_data.esDesignador(menos_unario.arg0()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 
-		m.menos();
+		m.ponInstruccion(m.menos());
 	}
 
 	public void procesa(Not not) {
 		not.arg0().procesa(this);
 		if (c_data.esDesignador(not.arg0()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 
-		m.not();
+		m.ponInstruccion(m.not());
 	}
 
 	public void procesa(Beq beq) {
 		beq.arg0().procesa(this);
 		if (c_data.esDesignador(beq.arg0()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 		beq.arg1().procesa(this);
 		if (c_data.esDesignador(beq.arg1()))
-			m.fetch();
-		m.beq();
+			m.ponInstruccion(m.fetch());
+		m.ponInstruccion(m.eq());
 	}
 
 	public void procesa(Bne bne) {
 		bne.arg0().procesa(this);
 		if (c_data.esDesignador(bne.arg0()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 		bne.arg1().procesa(this);
 		if (c_data.esDesignador(bne.arg1()))
-			m.fetch();
-		m.bne();
+			m.ponInstruccion(m.fetch());
+		m.ponInstruccion(m.ne());
 	}
 
 	public void procesa(Bge bge) {
 		bge.arg0().procesa(this);
 		if (c_data.esDesignador(bge.arg0()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 		bge.arg1().procesa(this);
 		if (c_data.esDesignador(bge.arg1()))
-			m.fetch();
-		m.bge();
+			m.ponInstruccion(m.fetch());
+		m.ponInstruccion(m.ge());
 
 	}
 
 	public void procesa(Ble ble) {
 		ble.arg0().procesa(this);
 		if (c_data.esDesignador(ble.arg0()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 		ble.arg1().procesa(this);
 		if (c_data.esDesignador(ble.arg1()))
-			m.fetch();
-		m.ble();
+			m.ponInstruccion(m.fetch());
+		m.ponInstruccion(m.le());
 
 	}
 
 	public void procesa(Blt blt) {
 		blt.arg0().procesa(this);
 		if (c_data.esDesignador(blt.arg0()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 		blt.arg1().procesa(this);
 		if (c_data.esDesignador(blt.arg1()))
-			m.fetch();
-		m.blt();
+			m.ponInstruccion(m.fetch());
+		m.ponInstruccion(m.lt());
 
 	}
 
 	public void procesa(Bgt bgt) {
 		bgt.arg0().procesa(this);
 		if (c_data.esDesignador(bgt.arg0()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 		bgt.arg1().procesa(this);
 		if (c_data.esDesignador(bgt.arg1()))
-			m.fetch();
-		m.bgt();
+			m.ponInstruccion(m.fetch());
+		m.ponInstruccion(m.gt());
 
 	}
 
 	public void procesa(And and) {
 		and.arg0().procesa(this);
 		if (c_data.esDesignador(and.arg0()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 		and.arg1().procesa(this);
 		if (c_data.esDesignador(and.arg1()))
-			m.fetch();
-		m.and();
+			m.ponInstruccion(m.fetch());
+		m.ponInstruccion(m.and());
 
 	}
 
 	public void procesa(Or or) {
 		or.arg0().procesa(this);
 		if (c_data.esDesignador(or.arg0()))
-			m.fetch();
+			m.ponInstruccion(m.fetch());
 		or.arg1().procesa(this);
 		if (c_data.esDesignador(or.arg1()))
-			m.fetch();
-		m.or();
+			m.ponInstruccion(m.fetch());
+		m.ponInstruccion(m.or());
 	}
 
 	public void procesa(R_true r_true) {
-		m.apilaBool(true);
+		m.ponInstruccion(m.apilaBool(true));
 
 	}
 
 	public void procesa(R_false r_false) {
-		m.apilaBool(false);
+		m.ponInstruccion(m.apilaBool(false));
 	}
 
-	public void procesa(Punto punto) {
-		punto.exp().procesa(this);
-		Object vinculo = v_data.vinculos.get(punto.exp());
-		Tipo tipo = c_data.tipos.get(vinculo);
-		m.acc(punto.id(), a_data.tamaños.get(tipo));
-	}
 
-	public void procesa(Flecha flecha) {
-		flecha.exp().procesa(this);
-		m.fetch();
-		Object vinculo = v_data.vinculos.get(flecha.exp());
-		Tipo tipo = c_data.tipos.get(vinculo);
-		m.acc(flecha.id(), a_data.tamaños.get(tipo));
-	}
+
+	
 
 	public void procesa(Indireccion ind) {
 		ind.exp().procesa(this);
-		m.fetch();
+		m.ponInstruccion(m.fetch());
 
 	}
 
 	public void procesa(R_null n) {
-		m.apilaPuntero(-1);
+		m.ponInstruccion(m.apilaPuntero(-1));
 	}
 
 	public void procesa(R_str s) {
-		m.apilaString(s.id().toString());
+		
+		m.ponInstruccion(m.apilaString(s.id().toString()));
 	}
 
 	public void procesa(Index ind) {
@@ -567,15 +575,60 @@ public class Generacion_codigo extends ProcesamientoPorDefecto {
 
 		ind.exp2().procesa(this);
 		if (c_data.esDesignador(ind.exp2()))
-			m.fetch();
-		Object vinculo = v_data.vinculos.get(ind);
-		Tipo tipo = c_data.tipos.get(vinculo);
-		m.indx(a_data.tamaños.get(tipo));
+			m.ponInstruccion(m.fetch());
+		Object vinculo = v_data.vinculos.get(ind.exp2());
+		Tipo tipo = (Tipo) c_data.tipos.get(vinculo);
+		m.ponInstruccion(m.indx(a_data.tamaños.get(tipo)));
 	}
 
 	public void procesa(Id id) {
 		Object vinculo = v_data.vinculos.get(id);
-		m.apilaPuntero(a_data.direcciones.get(vinculo));
+		m.ponInstruccion(m.apilaInt(a_data.direcciones.get(vinculo)));
+		
+	}
+	
+	public void procesa(Punto punto) {
+		punto.exp().procesa(this);
+		Object v = v_data.vinculos.get(punto.exp());
+		if(v instanceof Dec_Type) {
+			Dec_Type dec = (Dec_Type)v;
+			Tipo t = dec.tipo();
+			if(t instanceof Tipo_Reg) {
+				Tipo_Reg reg = (Tipo_Reg)t;
+				Campo c =buscaCampo(punto.id().toString(),reg.lcampos());
+				int desp = a_data.desplazamientos.get(c);
+				m.ponInstruccion(m.apilaPuntero(desp));
+			}
+		}
+
+	}
+	private Campo buscaCampo(String string, LCampos campos) {
+		if (campos instanceof LCampos_muchos) {
+			LCampos_muchos lcampos = (LCampos_muchos) campos;
+			Campo c = buscaCampo(string, lcampos.campo());
+			if(c !=null) {
+				return c; 
+			}
+			return buscaCampo(string, lcampos.campos());
+		}
+		else if (campos instanceof LCampos_uno) {
+			LCampos_uno lcampos = (LCampos_uno) campos;
+			return buscaCampo(string, lcampos);
+		}
+
+		return null;
+
+	}
+
+	private Campo buscaCampo(String string, LCampos_uno campos) {
+		return buscaCampo(string, campos.campo());
+	}
+
+	private Campo buscaCampo(String string, Campo campo) {
+		if (campo.id().toString().equals(string))
+			return campo;
+		return null;
+		
 	}
 
 }

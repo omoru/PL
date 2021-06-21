@@ -56,11 +56,15 @@ public class Vinculation_data {
 		if(!(tipo instanceof Tipo_Id)) {
 			return tipo;		
 		}
-		Object vinculo = vinculos.get(tipo);
-		if(vinculo instanceof Dec_Type) {
-			Dec_Type dec_type = (Dec_Type) vinculo;
-			return ref(dec_type.tipo());
+		else {
+			Tipo_Id t_id = (Tipo_Id)tipo;
+			Object vinculo = vinculos.get(t_id);
+			if(vinculo instanceof Dec_Type) {
+				Dec_Type dec_type = (Dec_Type) vinculo;
+				return ref(dec_type.tipo());
+			}
 		}
+	
 		return null;
 	}
 	public Object refNodo(Object o) {

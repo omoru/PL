@@ -349,43 +349,13 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 	public void procesa(Index ind) {
 		ind.exp1().procesa(this);
 		ind.exp2().procesa(this);
+		
 	}
 
 	public void procesa(Punto punto) {
 		punto.exp().procesa(this);
 		Object vinculo_exp = v_data.vinculos.get(punto.exp());
-		
-		/*if (vinculo_exp instanceof Dec_Var) {
-
-			Dec_Var type_vinculo_exp = (Dec_Var) vinculo_exp;
-			if (type_vinculo_exp.tipo() instanceof Tipo_Reg) {
-
-				Tipo_Reg reg = (Tipo_Reg) type_vinculo_exp.tipo();
-				if (buscaCampo(punto.id().toString(), reg.lcampos())) {
-
-				} else
-					v_data.insertaError("No se encontro el campo " + punto.id().toString(), punto.id().fila(),
-							punto.id().col());
-
-			} else if (type_vinculo_exp.tipo() instanceof Tipo_Id) {
-				Tipo type = v_data.ref(type_vinculo_exp.tipo());
-				if (type instanceof Tipo_Reg) {
-
-					Tipo_Reg reg = (Tipo_Reg) type;
-					if (buscaCampo(punto.id().toString(), reg.lcampos())) {
-
-					} else
-						v_data.insertaError("No se encontro el campo " + punto.id().toString(), punto.id().fila(),
-								punto.id().col());
-
-				} else
-					v_data.insertaError("El tipo base de " + punto.id().toString() + " no es de tipo registro.",
-							punto.id().fila(), punto.id().col());
-
-			} else
-				v_data.insertaError("El tipo base de " + punto.id().toString() + " no es de tipo registro.",
-						punto.id().fila(), punto.id().col());
-		} else*/ if (vinculo_exp instanceof Dec_Type) {
+		if (vinculo_exp instanceof Dec_Type) {
 
 			Dec_Type type_vinculo_exp = (Dec_Type) vinculo_exp;
 			if (type_vinculo_exp.tipo() instanceof Tipo_Reg) {
@@ -630,7 +600,7 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 				while (it.hasPrevious()) {
 					Object e = it.previous().get(t.id().toString());
 					if (e != null) {
-						v_data.insertaVinculo(tipo_p, e);
+						v_data.insertaVinculo(tipo_p.tipo(), e);
 						return;
 					}
 				}
