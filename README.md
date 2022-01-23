@@ -1,2 +1,2 @@
-# PL
-Procesadores de lenguajes
+# Procesadores de lenguajes
+Construccion de un procesador de lenguaje
