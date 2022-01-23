@@ -1,2 +1,2 @@
 # PL
-Procesadores de lenguajes: creando un lenguaje
+Procesadores de lenguajes
